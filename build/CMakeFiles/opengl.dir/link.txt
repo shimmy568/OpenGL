@@ -1,0 +1,1 @@
+/usr/bin/c++    -rdynamic CMakeFiles/opengl.dir/src/main.cpp.o  -o opengl  -L/usr/local/lib -Wl,-rpath,/usr/local/lib -lGLEW -lglfw -lglfw -lrt -lm -ldl -lXrandr -lXinerama -lXxf86vm -lXext -lXcursor -lXrender -lXfixes -lX11 -lpthread -lxcb -lXau -lXdmcp -lGLU -lGL 
