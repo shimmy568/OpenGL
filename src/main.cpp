@@ -5,6 +5,8 @@
 #include <math.h>
 #include <chrono>
 
+#include <Shader.h>
+
 int main()
 {
     glfwInit();
@@ -25,17 +27,35 @@ int main()
     glewExperimental = GL_TRUE;
     glewInit();
 
+    //Vertex array object (look into how these work)
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
+
     //Create vertex data
     float vertices[] = {
-        0.0f, 0.5f,
-        0.5f, -0.5f,
-        -0.5f, -0.5f};
+        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, //TopLeft
+         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, //TopRight
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, //BottomRight
+        -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, //BottomLeft
+        };
 
     //Send the vertex data to the gpu
     GLuint vbo;
     glGenBuffers(1, &vbo);
     glBindBuffer(GL_ARRAY_BUFFER, vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    GLuint elements[] = {
+        0, 1, 2,
+        0, 3, 2
+    };
+
+    GLuint ebo;
+    glGenBuffers(1, &ebo);
+
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
     //Load shader src
     const char* vertShaderSrc =
@@ -46,63 +66,36 @@ int main()
 #include "shad.frag"
         ;
 
-    //Compile shaders
-    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-    glShaderSource(vertexShader, 1, &vertShaderSrc, NULL);
-    glCompileShader(vertexShader);
-
-    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-    glShaderSource(fragmentShader, 1, &fragShaderSrc, NULL);
-    glCompileShader(fragmentShader);
-
-    //Get shader compile status
-    GLint status1;
-    glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &status1);
-
-    GLint status2;
-    glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &status2);
-    
-    if(status1 == GL_TRUE && status2 == GL_TRUE){
-        std::cout << "shader compiled good" << std::endl;
-    }
-
-    //Create shader program
-    GLuint shaderProgram = glCreateProgram();
-    glAttachShader(shaderProgram, vertexShader);
-    glAttachShader(shaderProgram, fragmentShader);
+    Shader* basicShader = new Shader(vertShaderSrc, fragShaderSrc);
     
     //Set shader output
-    glBindFragDataLocation(shaderProgram, 0, "outColor");
+    glBindFragDataLocation(basicShader->getGlPointer(), 0, "outColor");
 
     //Set the active shader
-    glLinkProgram(shaderProgram);
-    glUseProgram(shaderProgram);
-
-    //Set color via uniform
-    GLint uniColor = glGetUniformLocation(shaderProgram, "triangleColor");
-
-    //Vertex array object (look into how these work)
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
+    glLinkProgram(basicShader->getGlPointer());
+    glUseProgram(basicShader->getGlPointer());
 
     //Configure how the shader reads from the vertex buffer
-    GLint posAttrib = glGetAttribLocation(shaderProgram, "position");
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+    //Position info
+    GLint posAttrib = glGetAttribLocation(basicShader->getGlPointer(), "position");
     glEnableVertexAttribArray(posAttrib);
-    auto t_start = std::chrono::high_resolution_clock::now();
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+
+    //Color info
+    GLint colAttrib = glGetAttribLocation(basicShader->getGlPointer(), "color");
+    glEnableVertexAttribArray(colAttrib);
+    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(2*sizeof(float)));
 
     while (!glfwWindowShouldClose(window))
     {
-        //Change triangle color with time
 
-        auto t_now = std::chrono::high_resolution_clock::now();
-        float time = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
-        glUniform3f(uniColor, (sin(time * 3.0f) + 1.0f) / 2.0f, (sin(time * 2.0f) + 1.0f) / 2.0f, (sin(time * 5.0f) + 1.0f) / 2.0f);
-        
+        // Clear the screen to black
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
 
         //Shit go here
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        //glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -112,6 +105,13 @@ int main()
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
     }
+
+    delete basicShader;
+
+    glDeleteBuffers(1, &vbo);
+    glDeleteBuffers(1, &ebo);
+
+    glDeleteVertexArrays(1, &vao);
 
     glfwTerminate();
     return 0;
