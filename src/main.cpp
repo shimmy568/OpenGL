@@ -34,10 +34,10 @@ int main()
 
     //Create vertex data
     float vertices[] = {
-        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, //TopLeft
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, //TopRight
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, //BottomRight
-        -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, //BottomLeft
+        -0.5f,  0.5f, 0.5f, //TopLeft
+         0.5f,  0.5f, 0.0f, //TopRight
+         0.5f, -0.5f, 0.5f, //BottomRight
+        -0.5f, -0.5f, 1.0f, //BottomLeft
         };
 
     //Send the vertex data to the gpu
@@ -79,12 +79,12 @@ int main()
     //Position info
     GLint posAttrib = glGetAttribLocation(basicShader->getGlPointer(), "position");
     glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 3*sizeof(float), 0);
 
     //Color info
     GLint colAttrib = glGetAttribLocation(basicShader->getGlPointer(), "color");
     glEnableVertexAttribArray(colAttrib);
-    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(2*sizeof(float)));
+    glVertexAttribPointer(colAttrib, 1, GL_FLOAT, GL_FALSE, 3*sizeof(float), (void*)(2*sizeof(float)));
 
     while (!glfwWindowShouldClose(window))
     {
