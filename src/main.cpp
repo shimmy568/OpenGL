@@ -3,6 +3,11 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <SOIL/SOIL.h>
+#include <chrono>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 #include <Shader.h>
 
@@ -119,6 +124,10 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     
+    GLint uniTrans = glGetUniformLocation(basicShader->getGlPointer(), "trans");
+
+    auto t_start = std::chrono::high_resolution_clock::now();
+
     while (!glfwWindowShouldClose(window))
     {
 
@@ -127,6 +136,19 @@ int main()
         glClear(GL_COLOR_BUFFER_BIT);
 
         //Shit go here
+
+        auto t_now = std::chrono::high_resolution_clock::now();
+        float duration = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+
+        glm::mat4 trans;
+        trans = glm::rotate(
+            trans,
+            duration * glm::radians(180.0f),
+            glm::vec3(0.0f, 0.0f, 1.0f)
+        );
+
+        glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
 

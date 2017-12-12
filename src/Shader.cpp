@@ -19,21 +19,22 @@ Shader::Shader(const char *vertSrc, const char *fragSrc)
     GLint status2;
     glGetShaderiv(Shader::fragShader, GL_COMPILE_STATUS, &status2);
 
-    if (status1 == GL_TRUE && status2 == GL_TRUE)
-    {
-        std::cout << "shaders compiled good" << std::endl;
-    }
-    else
+    if (status1 != GL_TRUE || status2 != GL_TRUE)
     {
         std::cout << "shaders failed to compile" << std::endl;
         //Get shader complile log
-        char bufferVert[512];
+        int length;
+        glGetShaderiv(Shader::vertShader, GL_INFO_LOG_LENGTH, &length);
+        char* bufferVert = new char[length];
         glGetShaderInfoLog(Shader::vertShader, 512, NULL, bufferVert);
         std::cout << "Vertex shader comp log: " << bufferVert << std::endl;
+        delete bufferVert;
 
-        char bufferFrag[512];
+        glGetShaderiv(Shader::fragShader, GL_INFO_LOG_LENGTH, &length);
+        char* bufferFrag = new char[length];
         glGetShaderInfoLog(Shader::fragShader, 512, NULL, bufferFrag);
         std::cout << "Fragment shader comp log: " << bufferFrag << std::endl;
+        delete bufferFrag;
     }
 
     //Create shader program
