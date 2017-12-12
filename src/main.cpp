@@ -2,8 +2,7 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include <math.h>
-#include <chrono>
+#include <SOIL/SOIL.h>
 
 #include <Shader.h>
 
@@ -22,8 +21,6 @@ int main()
 
     glfwMakeContextCurrent(window);
 
-    
-
     glewExperimental = GL_TRUE;
     glewInit();
 
@@ -34,11 +31,11 @@ int main()
 
     //Create vertex data
     float vertices[] = {
-        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, //TopLeft
-         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, //TopRight
-         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, //BottomRight
-        -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, //BottomLeft
-        };
+    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, //TopLeft
+     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, //TopRight
+     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //BottomRight
+    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  //BottomLeft
+    };
 
     //Send the vertex data to the gpu
     GLuint vbo;
@@ -48,8 +45,7 @@ int main()
 
     GLuint elements[] = {
         0, 1, 2,
-        0, 3, 2
-    };
+        0, 3, 2};
 
     GLuint ebo;
     glGenBuffers(1, &ebo);
@@ -58,16 +54,17 @@ int main()
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
     //Load shader src
-    const char* vertShaderSrc =
+    const char *vertShaderSrc =
 #include "shad.vert"
         ;
 
-    const char* fragShaderSrc =
+    const char *fragShaderSrc =
 #include "shad.frag"
         ;
 
-    Shader* basicShader = new Shader(vertShaderSrc, fragShaderSrc);
-    
+    //Load Shader using shader obj
+    Shader *basicShader = new Shader(vertShaderSrc, fragShaderSrc);
+
     //Set shader output
     glBindFragDataLocation(basicShader->getGlPointer(), 0, "outColor");
 
@@ -79,13 +76,31 @@ int main()
     //Position info
     GLint posAttrib = glGetAttribLocation(basicShader->getGlPointer(), "position");
     glEnableVertexAttribArray(posAttrib);
-    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 5*sizeof(float), 0);
+    glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), 0);
 
     //Color info
     GLint colAttrib = glGetAttribLocation(basicShader->getGlPointer(), "color");
     glEnableVertexAttribArray(colAttrib);
-    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 5*sizeof(float), (void*)(2*sizeof(float)));
+    glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void *)(2 * sizeof(float)));
 
+    //Texture info
+    GLint texAttrib = glGetAttribLocation(basicShader->getGlPointer(), "texcoord");
+    glEnableVertexAttribArray(texAttrib);
+    glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(5 * sizeof(float)));
+
+    //Load test image
+    int width, height;
+    unsigned char* image = 
+        SOIL_load_image("img.png", &width, &height, 0, SOIL_LOAD_RGB);
+    std::cout << width << " " << height << std::endl;
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
+    SOIL_free_image_data(image);
+
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    
     while (!glfwWindowShouldClose(window))
     {
 

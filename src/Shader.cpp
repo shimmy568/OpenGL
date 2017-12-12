@@ -1,7 +1,8 @@
 #include <Shader.h>
 #include <iostream>
 
-Shader::Shader(const char* vertSrc, const char* fragSrc){
+Shader::Shader(const char *vertSrc, const char *fragSrc)
+{
     //Compile shaders
     Shader::vertShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(Shader::vertShader, 1, &vertSrc, NULL);
@@ -17,10 +18,13 @@ Shader::Shader(const char* vertSrc, const char* fragSrc){
 
     GLint status2;
     glGetShaderiv(Shader::fragShader, GL_COMPILE_STATUS, &status2);
-    
-    if(status1 == GL_TRUE && status2 == GL_TRUE){
+
+    if (status1 == GL_TRUE && status2 == GL_TRUE)
+    {
         std::cout << "shaders compiled good" << std::endl;
-    }else{
+    }
+    else
+    {
         std::cout << "shaders failed to compile" << std::endl;
         //Get shader complile log
         char bufferVert[512];
@@ -38,12 +42,14 @@ Shader::Shader(const char* vertSrc, const char* fragSrc){
     glAttachShader(shaderProgram, Shader::fragShader);
 }
 
-Shader::~Shader(){
+Shader::~Shader()
+{
     glDeleteProgram(Shader::shaderProgram);
     glDeleteShader(Shader::vertShader);
     glDeleteShader(Shader::fragShader);
 }
 
-GLuint Shader::getGlPointer(){
+GLuint Shader::getGlPointer()
+{
     return Shader::shaderProgram;
 }
