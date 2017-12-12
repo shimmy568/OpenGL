@@ -159,6 +159,12 @@ int main()
             duration * glm::radians(180.0f),
             glm::vec3(0.0f, 0.0f, 1.0f)
         );
+
+        model = glm::scale(
+            model,
+            glm::vec3(abs(sin(duration)), abs(sin(duration)), 0.0f)
+        );
+
         glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
