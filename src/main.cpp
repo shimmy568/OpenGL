@@ -34,12 +34,12 @@ int main()
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
 
-    //Create vertex data
-    float vertices[] = {
-    -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, //TopLeft
-     0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, //TopRight
-     0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, //BottomRight
-    -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  //BottomLeft
+    GLfloat vertices[] = {
+    //  Position      Color             Texcoords
+        -0.5f,  0.5f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, // Top-left
+         0.5f,  0.5f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, // Top-right
+         0.5f, -0.5f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f, // Bottom-right
+        -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f  // Bottom-left
     };
 
     //Send the vertex data to the gpu
@@ -123,8 +123,21 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    
-    GLint uniTrans = glGetUniformLocation(basicShader->getGlPointer(), "trans");
+
+    GLint uniModel = glGetUniformLocation(basicShader->getGlPointer(), "model");
+
+    // Set up projection
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(1.2f, 1.2f, 1.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f)
+    );
+    GLint uniView = glGetUniformLocation(basicShader->getGlPointer(), "view");
+    glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 1.0f, 10.0f);
+    GLint uniProj = glGetUniformLocation(basicShader->getGlPointer(), "proj");
+    glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
     auto t_start = std::chrono::high_resolution_clock::now();
 
@@ -140,14 +153,13 @@ int main()
         auto t_now = std::chrono::high_resolution_clock::now();
         float duration = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
-        glm::mat4 trans;
-        trans = glm::rotate(
-            trans,
+        glm::mat4 model;
+        model = glm::rotate(
+            model,
             duration * glm::radians(180.0f),
             glm::vec3(0.0f, 0.0f, 1.0f)
         );
-
-        glUniformMatrix4fv(uniTrans, 1, GL_FALSE, glm::value_ptr(trans));
+        glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         //glDrawArrays(GL_TRIANGLES, 0, 6);
