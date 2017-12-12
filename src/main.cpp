@@ -3,6 +3,7 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 #include <SOIL/SOIL.h>
+#include <chrono>
 
 #include <Shader.h>
 
@@ -118,9 +119,18 @@ int main()
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+    GLint timeloc = glGetUniformLocation(basicShader->getGlPointer(), "time");
     
+    auto t_start = std::chrono::high_resolution_clock::now();
     while (!glfwWindowShouldClose(window))
     {
+
+        auto t_now = std::chrono::high_resolution_clock::now();
+
+        float duration = std::chrono::duration_cast<std::chrono::duration<float>>(t_start - t_now).count();
+
+        glUniform1f(timeloc, duration);
 
         // Clear the screen to black
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
