@@ -139,7 +139,11 @@ int main()
     GLint uniProj = glGetUniformLocation(basicShader->getGlPointer(), "proj");
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
-    auto t_start = std::chrono::high_resolution_clock::now();
+    bool flipping = false;
+    float remaining = 360.0f;
+    float currentAngle = 0.0f;
+
+    auto t_start = std::chrono::high_resolution_clock::now();    
 
     while (!glfwWindowShouldClose(window))
     {
@@ -151,18 +155,34 @@ int main()
         //Shit go here
 
         auto t_now = std::chrono::high_resolution_clock::now();
+        
         float duration = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
+        t_start = std::chrono::high_resolution_clock::now();
+        
+        float toFlip = 0.0f;
+        if(flipping){
+            toFlip = 40.0f + (remaining / 6.0f);
+            toFlip = toFlip * duration;
+            remaining -= toFlip;
+        }
+
+
+        currentAngle += toFlip;
+        if(currentAngle >= 360.0f){
+            currentAngle = 0.0f;
+            remaining = 360.0f;
+            flipping = false;
+        }
         glm::mat4 model;
         model = glm::rotate(
             model,
-            duration * glm::radians(180.0f),
-            glm::vec3(0.0f, 0.0f, 1.0f)
+            glm::radians(currentAngle),
+            glm::vec3(1.0f, 0.0f, 0.0f)
         );
         glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, 6);
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -171,6 +191,11 @@ int main()
         {
             glfwSetWindowShouldClose(window, GL_TRUE);
         }
+        if (glfwGetKey(window, GLFW_KEY_SPACE) == GLFW_PRESS && !flipping)
+        {
+            flipping = true;
+        }
+
     }
 
     delete basicShader;
