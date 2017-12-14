@@ -3,6 +3,8 @@ project(opengl)
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
+set(CMAKE_BUILD_TYPE Debug)
+
 link_directories(/usr/local/lib)
 #Bring the headers, such as Student.h into the project
 include_directories(include)

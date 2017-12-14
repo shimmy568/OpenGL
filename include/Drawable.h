@@ -24,9 +24,9 @@ class Drawable
     float yScale;
     float zScale;
 
-    float* formatVertexAndElementData(std::vector<float> vertexs, std::vector<float>* elements);
+    std::vector<float> formatVertexAndElementData(std::vector<float> vertexs, std::vector<int>* elements);
   public:
-    Drawable();
+    Drawable(std::vector<float> vecData);
     ~Drawable();
 
     std::array<float, 3> getPosition();

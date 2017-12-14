@@ -1,13 +1,19 @@
 #include <Drawable.h>
 #include <unordered_map>
 #include <string>
+#include <array>
+#include <vector>
 #include <stdexcept>
+#include <iostream>
 
-Drawable::Drawable(){
+Drawable::Drawable(std::vector<float> vecData){
     //Create and bind this objects vertex array
-    glGenVertexArrays(1, &(Drawable::vertexArrayObject));
-    glBindVertexArray(Drawable::vertexArrayObject);
+    //glGenVertexArrays(1, &(Drawable::vertexArrayObject));
+    //glBindVertexArray(Drawable::vertexArrayObject);
 
+    //Generate unique vertex data and element data
+    std::vector<int> elementData;
+    std::vector<float> uniqueVertexData = Drawable::formatVertexAndElementData(vecData, &elementData);
 
 }
 
@@ -25,7 +31,7 @@ Drawable::~Drawable(){
  * 
  * @returns The new vertex data that only contains unique data points
  */
-float* Drawable::formatVertexAndElementData(std::vector<float> vertexs, std::vector<float>* elements){
+std::vector<float> Drawable::formatVertexAndElementData(std::vector<float> vertexs, std::vector<int>* elements){
 
     //Make sure the input is good
     if(vertexs.size() % 3 != 0){
@@ -39,13 +45,15 @@ float* Drawable::formatVertexAndElementData(std::vector<float> vertexs, std::vec
     std::unordered_map<std::string, int> dupeChecker;
     int curElement = 0;
     std::vector<float> uniqueVertexData;
-    for(int i = 0; i < vertexs.size() / 3; i+=3){
+    for(int i = 0; i < vertexs.size(); i+=3){
         std::string vertKey = std::to_string(vertexs[i]) + "," + std::to_string(vertexs[i + 1]) + "," + std::to_string(vertexs[i + 2]);
         auto res = dupeChecker.find(vertKey);
-        if(res == dupeChecker.end()){
+        if(res != dupeChecker.end()){
+            std::cout << "old" << std::endl;
             //Vertex is not unique
             (*elements).push_back(res->second);
         } else {
+            std::cout << "new" << std::endl;
             //Vertex is unique
             dupeChecker.insert({vertKey, curElement});
             (*elements).push_back(curElement);
@@ -55,7 +63,7 @@ float* Drawable::formatVertexAndElementData(std::vector<float> vertexs, std::vec
             curElement++;
         }
     }
-    
+
     //Return an array of the unique vertex data
-    return &uniqueVertexData[0];
+    return uniqueVertexData;
 }
