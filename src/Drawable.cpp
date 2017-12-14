@@ -22,17 +22,40 @@ Drawable::~Drawable(){
  *
  * @param vertexs - The list of vertex data that will be formatted 
  * @param elements - An empty vector that the element data will be put into
+ * 
+ * @returns The new vertex data that only contains unique data points
  */
-bool Drawable::formatVertexAndElementData(std::vector<float>* vertexs, std::vector<float>* elements){
-    if(vertexs->size() % 3 != 0){
+float* Drawable::formatVertexAndElementData(std::vector<float> vertexs, std::vector<float>* elements){
+
+    //Make sure the input is good
+    if(vertexs.size() % 3 != 0){
         throw std::invalid_argument("Vertexs must be provided in multiples of three");
     }
     if(elements->size() != 0){
         throw std::invalid_argument("Elements vector must be empty");
     }
-    std::unordered_map<std::string, bool> dupeChecker;
 
-    for(int i = 0; i < vertexs->size(); i++){
-        
+    //Find all unique vertex data points and generate the element list based on that
+    std::unordered_map<std::string, int> dupeChecker;
+    int curElement = 0;
+    std::vector<float> uniqueVertexData;
+    for(int i = 0; i < vertexs.size() / 3; i+=3){
+        std::string vertKey = std::to_string(vertexs[i]) + "," + std::to_string(vertexs[i + 1]) + "," + std::to_string(vertexs[i + 2]);
+        auto res = dupeChecker.find(vertKey);
+        if(res == dupeChecker.end()){
+            //Vertex is not unique
+            (*elements).push_back(res->second);
+        } else {
+            //Vertex is unique
+            dupeChecker.insert({vertKey, curElement});
+            (*elements).push_back(curElement);
+            uniqueVertexData.push_back(vertexs[i]);
+            uniqueVertexData.push_back(vertexs[i + 1]);
+            uniqueVertexData.push_back(vertexs[i + 2]);
+            curElement++;
+        }
     }
+    
+    //Return an array of the unique vertex data
+    return &uniqueVertexData[0];
 }

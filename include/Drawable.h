@@ -24,7 +24,7 @@ class Drawable
     float yScale;
     float zScale;
 
-    bool formatVertexAndElementData(std::vector<float>* vertexs, std::vector<float>* elements);
+    float* formatVertexAndElementData(std::vector<float> vertexs, std::vector<float>* elements);
   public:
     Drawable();
     ~Drawable();
