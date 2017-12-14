@@ -174,6 +174,7 @@ int main()
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
     glEnable(GL_DEPTH_TEST);
+    glEnable(GL_STENCIL_TEST);
 
     auto t_start = std::chrono::high_resolution_clock::now();
 

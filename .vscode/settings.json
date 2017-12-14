@@ -48,6 +48,7 @@
         "optional": "cpp",
         "sstream": "cpp",
         "thread": "cpp",
-        "valarray": "cpp"
+        "valarray": "cpp",
+        "unordered_map": "cpp"
     }
 }
