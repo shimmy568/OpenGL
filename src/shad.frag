@@ -13,6 +13,6 @@ void main()
 {
     vec4 colKitten = texture(texKitten, Texcoord);
     vec4 colPuppy = texture(texPuppy, Texcoord);
-    outColor = mix(colKitten, colPuppy, 0.5);
+    outColor = mix(colKitten, colPuppy, 0.5) * vec4(Color, 1.0);
 }
 )"
