@@ -121,7 +121,50 @@ int main()
         -0.5f, 0.5f, 0.5f,
         -0.5f, 0.5f, -0.5f};
 
-    Drawable d(std::vector<float>(verts, verts + sizeof verts / sizeof verts[0]));
+    GLfloat colorData[] = {
+        0.25f, 0.25f, 0.25f,
+        0.5f, 0.25f, 0.25f,
+        0.5f, 0.5f, 0.25f,
+        0.5f, 0.5f, 0.25f,
+        0.25f, 0.5f, 0.25f,
+        0.25f, 0.25f, 0.25f,
+
+        0.25f, 0.25f, 0.5f,
+        0.5f, 0.25f, 0.5f,
+        0.5f, 0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f,
+        0.25f, 0.5f, 0.5f,
+        0.25f, 0.25f, 0.5f,
+
+        0.25f, 0.5f, 0.5f,
+        0.25f, 0.5f, 0.25f,
+        0.25f, 0.25f, 0.25f,
+        0.25f, 0.25f, 0.25f,
+        0.25f, 0.25f, 0.5f,
+        0.25f, 0.5f, 0.5f,
+
+        0.5f, 0.5f, 0.5f,
+        0.5f, 0.5f, 0.25f,
+        0.5f, 0.25f, 0.25f,
+        0.5f, 0.25f, 0.25f,
+        0.5f, 0.25f, 0.5f,
+        0.5f, 0.5f, 0.5f,
+
+        0.25f, 0.25f, 0.25f,
+        0.5f, 0.25f, 0.25f,
+        0.5f, 0.25f, 0.5f,
+        0.5f, 0.25f, 0.5f,
+        0.25f, 0.25f, 0.5f,
+        0.25f, 0.25f, 0.25f,
+
+        0.25f, 0.5f, 0.25f,
+        0.5f, 0.5f, 0.25f,
+        0.5f, 0.5f, 0.5f,
+        0.5f, 0.5f, 0.5f,
+        0.25f, 0.5f, 0.5f,
+        0.25f, 0.5f, 0.25f};
+
+    Drawable d(std::vector<float>(verts, verts + sizeof verts / sizeof(float)), std::vector<float>(colorData, colorData + sizeof colorData / sizeof(float)));
 
     //Send the vertex data to the gpu
     GLuint vbo;
