@@ -1,6 +1,8 @@
 cmake_minimum_required(VERSION 2.8.9)
 project(opengl)
 
+SET( CMAKE_CXX_FLAGS "-std=c++11 -O3")
+
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 
 set(CMAKE_BUILD_TYPE Debug)
