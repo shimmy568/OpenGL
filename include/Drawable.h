@@ -10,10 +10,8 @@ class Drawable
 {
   private:
     GLuint vertexArrayObject;
-    GLuint vertexBufferArrayVertex;
-    GLuint vertexBufferArrayColor;
-    GLuint elementBufferArrayVertex;
-    GLuint elementBufferArrayColor;
+    GLuint vertexBufferObject;
+    GLuint elementBufferObject;
 
     float xPosition;
     float yPosition;
@@ -30,6 +28,7 @@ class Drawable
     Shader* shader;
 
     std::vector<float> formatElementData(std::vector<float> data, std::vector<int>* elements, int step);
+    std::vector<float> spliceData(std::vector<float> vectorData, std::vector<float> colorData);
   public:
     Drawable(std::vector<float> vertData, std::vector<float> colorData, Shader* shad);
     ~Drawable();

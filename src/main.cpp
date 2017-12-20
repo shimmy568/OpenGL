@@ -161,11 +161,11 @@ int main()
 
     //Load shader src
     const char *vertShaderSrc =
-#include "shad.vert"
+#include "shaders/shad.vert"
         ;
 
     const char *fragShaderSrc =
-#include "shad.frag"
+#include "shaders/shad.frag"
         ;
 
     //Load Shader using shader obj
