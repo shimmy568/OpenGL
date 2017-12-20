@@ -33,8 +33,12 @@
                 "/usr/local/include",
                 "/usr/lib/gcc/x86_64-pc-linux-gnu/7.2.1/include-fixed",
                 "/usr/include",
+                "/usr/include/linux",
                 "${workspaceRoot}",
-                "${workspaceRoot}/include"
+                "${workspaceRoot}/include",
+                "/usr/include/c++/5",
+                "/usr/include/x86_64-linux-gnu/c++/5",
+                "/usr/include/x86_64-linux-gnu"
             ],
             "defines": [],
             "intelliSenseMode": "clang-x64",

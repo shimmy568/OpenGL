@@ -9,8 +9,10 @@ class Drawable
 {
   private:
     GLuint vertexArrayObject;
-    GLuint vertexBufferArray;
-    GLuint elementBufferArray;
+    GLuint vertexBufferArrayVertex;
+    GLuint vertexBufferArrayColor;
+    GLuint elementBufferArrayVertex;
+    GLuint elementBufferArrayColor;
 
     float xPosition;
     float yPosition;

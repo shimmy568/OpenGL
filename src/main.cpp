@@ -30,11 +30,6 @@ int main()
     glewExperimental = GL_TRUE;
     glewInit();
 
-    //Vertex array object (look into how these work)
-    GLuint vao;
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-
     GLfloat vertices[] = {
         -0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 0.0f, 0.0f,
         0.5f, -0.5f, -0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 0.0f,
@@ -165,6 +160,11 @@ int main()
         0.25f, 0.5f, 0.25f};
 
     Drawable d(std::vector<float>(verts, verts + sizeof verts / sizeof(float)), std::vector<float>(colorData, colorData + sizeof colorData / sizeof(float)));
+
+    //Vertex array object (look into how these work)
+    GLuint vao;
+    glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
 
     //Send the vertex data to the gpu
     GLuint vbo;

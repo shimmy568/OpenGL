@@ -8,8 +8,8 @@
 
 Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData){
     //Create and bind this objects vertex array
-    //glGenVertexArrays(1, &(Drawable::vertexArrayObject));
-    //glBindVertexArray(Drawable::vertexArrayObject);
+    glGenVertexArrays(1, &(Drawable::vertexArrayObject));
+    glBindVertexArray(Drawable::vertexArrayObject);
 
     //Generate unique data and element data
     std::vector<int> vertElementData;
@@ -18,6 +18,27 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData){
     std::vector<int> colorElementData;
     std::vector<float> uniqueColorData = Drawable::formatElementData(colorData, &colorElementData, 3);
 
+    //Generate buffers
+    glGenBuffers(1, &(Drawable::vertexBufferArrayVertex));
+    glGenBuffers(1, &(Drawable::vertexBufferArrayColor));
+    glGenBuffers(1, &(Drawable::elementBufferArrayVertex));
+    glGenBuffers(1, &(Drawable::elementBufferArrayColor));
+
+    //Load unique vert data
+    glBindBuffer(GL_ARRAY_BUFFER, Drawable::vertexBufferArrayVertex);
+    glBufferData(GL_ARRAY_BUFFER, uniqueVertexData.size() * sizeof(float), &uniqueVertexData[0], GL_STATIC_DRAW);
+
+    //Load unique color data
+    glBindBuffer(GL_ARRAY_BUFFER, Drawable::vertexBufferArrayColor);
+    glBufferData(GL_ARRAY_BUFFER, uniqueColorData.size() * sizeof(float), &uniqueColorData[0], GL_STATIC_DRAW);
+
+    //Load vert element data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Drawable::elementBufferArrayVertex);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, vertElementData.size() * sizeof(int), &vertElementData[0], GL_STATIC_DRAW);
+
+    //Load color element data
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Drawable::elementBufferArrayColor);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, colorElementData.size() * sizeof(int), &colorElementData[0], GL_STATIC_DRAW);
 }
 
 Drawable::~Drawable(){
