@@ -4,6 +4,7 @@
 #include <GL/glew.h>
 #include <array>
 #include <vector>
+#include <Shader.h>
 
 class Drawable
 {
@@ -26,9 +27,11 @@ class Drawable
     float yScale;
     float zScale;
 
+    Shader* shader;
+
     std::vector<float> formatElementData(std::vector<float> data, std::vector<int>* elements, int step);
   public:
-    Drawable(std::vector<float> vertData, std::vector<float> colorData);
+    Drawable(std::vector<float> vertData, std::vector<float> colorData, Shader* shad);
     ~Drawable();
 
     std::array<float, 3> getPosition();
@@ -39,6 +42,7 @@ class Drawable
     float getXAngle();
     float getYAngle();
     float getZAngle();
+    void clearData();
 };
 
 #endif

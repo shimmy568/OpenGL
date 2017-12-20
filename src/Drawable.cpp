@@ -6,7 +6,9 @@
 #include <stdexcept>
 #include <iostream>
 
-Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData){
+Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Shader* shad){
+    Drawable::shader = shad;
+
     //Create and bind this objects vertex array
     glGenVertexArrays(1, &(Drawable::vertexArrayObject));
     glBindVertexArray(Drawable::vertexArrayObject);
@@ -39,6 +41,21 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData){
     //Load color element data
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Drawable::elementBufferArrayColor);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, colorElementData.size() * sizeof(int), &colorElementData[0], GL_STATIC_DRAW);
+
+    //Initalize vertex attribs
+    
+}
+
+void Drawable::clearData(){
+
+    //Delete(invalidates) the vertex buffers used for this object
+    glInvalidateBufferData(Drawable::vertexBufferArrayVertex);
+    glInvalidateBufferData(Drawable::vertexBufferArrayColor);
+    glInvalidateBufferData(Drawable::elementBufferArrayVertex);
+    glInvalidateBufferData(Drawable::elementBufferArrayColor);
+
+    //Delete the vertex array for this object
+    glDeleteVertexArrays(1, &(Drawable::vertexArrayObject));
 }
 
 Drawable::~Drawable(){

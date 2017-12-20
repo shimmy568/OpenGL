@@ -159,7 +159,19 @@ int main()
         0.25f, 0.5f, 0.5f,
         0.25f, 0.5f, 0.25f};
 
-    Drawable d(std::vector<float>(verts, verts + sizeof verts / sizeof(float)), std::vector<float>(colorData, colorData + sizeof colorData / sizeof(float)));
+    //Load shader src
+    const char *vertShaderSrc =
+#include "shad.vert"
+        ;
+
+    const char *fragShaderSrc =
+#include "shad.frag"
+        ;
+
+    //Load Shader using shader obj
+    Shader basicShader(vertShaderSrc, fragShaderSrc);
+
+    Drawable d(std::vector<float>(verts, verts + sizeof verts / sizeof(float)), std::vector<float>(colorData, colorData + sizeof colorData / sizeof(float)), &basicShader);
 
     //Vertex array object (look into how these work)
     GLuint vao;
@@ -182,38 +194,26 @@ int main()
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
-    //Load shader src
-    const char *vertShaderSrc =
-#include "shad.vert"
-        ;
-
-    const char *fragShaderSrc =
-#include "shad.frag"
-        ;
-
-    //Load Shader using shader obj
-    Shader *basicShader = new Shader(vertShaderSrc, fragShaderSrc);
-
     //Set shader output
-    glBindFragDataLocation(basicShader->getGlPointer(), 0, "outColor");
+    glBindFragDataLocation(basicShader.getGlPointer(), 0, "outColor");
 
     //Set the active shader
-    glLinkProgram(basicShader->getGlPointer());
-    glUseProgram(basicShader->getGlPointer());
+    glLinkProgram(basicShader.getGlPointer());
+    glUseProgram(basicShader.getGlPointer());
 
     //Configure how the shader reads from the vertex buffer
     //Position info
-    GLint posAttrib = glGetAttribLocation(basicShader->getGlPointer(), "position");
+    GLint posAttrib = glGetAttribLocation(basicShader.getGlPointer(), "position");
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
 
     //Color info
-    GLint colAttrib = glGetAttribLocation(basicShader->getGlPointer(), "color");
+    GLint colAttrib = glGetAttribLocation(basicShader.getGlPointer(), "color");
     glEnableVertexAttribArray(colAttrib);
     glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
 
     //Texture info
-    GLint texAttrib = glGetAttribLocation(basicShader->getGlPointer(), "texcoord");
+    GLint texAttrib = glGetAttribLocation(basicShader.getGlPointer(), "texcoord");
     glEnableVertexAttribArray(texAttrib);
     glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 
@@ -229,7 +229,7 @@ int main()
     image = SOIL_load_image("../res/img.png", &width, &height, 0, SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
     SOIL_free_image_data(image);
-    glUniform1i(glGetUniformLocation(basicShader->getGlPointer(), "texKitten"), 0);
+    glUniform1i(glGetUniformLocation(basicShader.getGlPointer(), "texKitten"), 0);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -241,25 +241,25 @@ int main()
     image = SOIL_load_image("../res/pupper.png", &width, &height, 0, SOIL_LOAD_RGB);
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, image);
     SOIL_free_image_data(image);
-    glUniform1i(glGetUniformLocation(basicShader->getGlPointer(), "texPuppy"), 1);
+    glUniform1i(glGetUniformLocation(basicShader.getGlPointer(), "texPuppy"), 1);
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-    GLint uniModel = glGetUniformLocation(basicShader->getGlPointer(), "model");
+    GLint uniModel = glGetUniformLocation(basicShader.getGlPointer(), "model");
 
     // Set up projection
     glm::mat4 view = glm::lookAt(
         glm::vec3(1.2f, 1.2f, 1.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
         glm::vec3(0.0f, 0.0f, 1.0f));
-    GLint uniView = glGetUniformLocation(basicShader->getGlPointer(), "view");
+    GLint uniView = glGetUniformLocation(basicShader.getGlPointer(), "view");
     glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
 
     glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 1.0f, 10.0f);
-    GLint uniProj = glGetUniformLocation(basicShader->getGlPointer(), "proj");
+    GLint uniProj = glGetUniformLocation(basicShader.getGlPointer(), "proj");
     glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
 
     glEnable(GL_DEPTH_TEST);
@@ -298,7 +298,7 @@ int main()
         }
     }
 
-    delete basicShader;
+    basicShader.clearShaderProgram();
 
     glDeleteBuffers(1, &vbo);
     glDeleteBuffers(1, &ebo);
