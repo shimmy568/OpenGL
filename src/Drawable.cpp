@@ -43,7 +43,7 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Sh
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, colorElementData.size() * sizeof(int), &colorElementData[0], GL_STATIC_DRAW);
 
     //Initalize vertex attribs
-    
+
 }
 
 void Drawable::clearData(){
@@ -88,7 +88,7 @@ std::vector<float> Drawable::formatElementData(std::vector<float> data, std::vec
     int curElement = 0;
     std::vector<float> uniqueVertexData;
     for(int i = 0; i < data.size(); i+=step){
-        std::string vertKey = std::to_string(data[i]) + "," + std::to_string(data[i + 1]) + "," + std::to_string(data[i + 2]);
+        std::string vertKey = std::to_string(data[i]);
         for(int o = 1; o < step; o++){
             vertKey += "," + std::to_string(data[i + step]);
         }
