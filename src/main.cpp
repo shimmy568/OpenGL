@@ -198,7 +198,6 @@ int main()
     glBindFragDataLocation(basicShader.getGlPointer(), 0, "outColor");
 
     //Set the active shader
-    glLinkProgram(basicShader.getGlPointer());
     glUseProgram(basicShader.getGlPointer());
 
     //Configure how the shader reads from the vertex buffer

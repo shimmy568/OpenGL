@@ -30,8 +30,21 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Sh
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Drawable::elementBufferObject);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * elementData.size(), &elementData[0], GL_STATIC_DRAW);
 
+    //Set vao
+    glGenVertexArrays(1, &(Drawable::vertexArrayObject));
+    glBindVertexArray(Drawable::vertexArrayObject);
+
     //Setup shader program
+    GLint posAttrib = glGetAttribLocation(Drawable::shader->getGlPointer(), "position");
+    glEnableVertexAttribArray(posAttrib);
+    glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
+
+    GLint colorAttrib = glGetAttribLocation(Drawable::shader->getGlPointer(), "position");
+    glEnableVertexAttribArray(colorAttrib);
+    glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
     
+    //Clear vao
+    glBindVertexArray(0);
 }
 
 void Drawable::clearData()

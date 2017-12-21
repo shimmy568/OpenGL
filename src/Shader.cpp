@@ -29,13 +29,13 @@ Shader::Shader(const char *vertSrc, const char *fragSrc)
         //Get shader complile log
         int length;
         glGetShaderiv(vertShader, GL_INFO_LOG_LENGTH, &length);
-        char* bufferVert = new char[length];
+        char *bufferVert = new char[length];
         glGetShaderInfoLog(vertShader, 512, NULL, bufferVert);
         std::cout << "Vertex shader comp log: " << bufferVert << std::endl;
         delete bufferVert;
 
         glGetShaderiv(fragShader, GL_INFO_LOG_LENGTH, &length);
-        char* bufferFrag = new char[length];
+        char *bufferFrag = new char[length];
         glGetShaderInfoLog(fragShader, 512, NULL, bufferFrag);
         std::cout << "Fragment shader comp log: " << bufferFrag << std::endl;
         delete bufferFrag;
@@ -46,6 +46,9 @@ Shader::Shader(const char *vertSrc, const char *fragSrc)
     glAttachShader(shaderProgram, vertShader);
     glAttachShader(shaderProgram, fragShader);
 
+    //Link shader program
+    glLinkProgram(Shader::shaderProgram);
+
     glDeleteShader(vertShader);
     glDeleteShader(fragShader);
 }
@@ -54,7 +57,8 @@ Shader::Shader(const char *vertSrc, const char *fragSrc)
  * Function that clears the shader program from memory
  * @author Owen Anderson
  */
-void Shader::clearShaderProgram(){
+void Shader::clearShaderProgram()
+{
     glDeleteProgram(Shader::shaderProgram);
 }
 

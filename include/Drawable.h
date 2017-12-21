@@ -13,6 +13,11 @@ class Drawable
     GLuint vertexBufferObject;
     GLuint elementBufferObject;
 
+    Shader* shader;
+
+    std::vector<float> formatElementData(std::vector<float> data, std::vector<int>* elements, int step);
+    std::vector<float> spliceData(std::vector<float> vectorData, std::vector<float> colorData);
+  public:
     float xPosition;
     float yPosition;
     float zPosition;
@@ -25,11 +30,6 @@ class Drawable
     float yScale;
     float zScale;
 
-    Shader* shader;
-
-    std::vector<float> formatElementData(std::vector<float> data, std::vector<int>* elements, int step);
-    std::vector<float> spliceData(std::vector<float> vectorData, std::vector<float> colorData);
-  public:
     Drawable(std::vector<float> vertData, std::vector<float> colorData, Shader* shad);
     ~Drawable();
 
