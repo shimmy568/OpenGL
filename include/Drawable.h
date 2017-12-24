@@ -30,6 +30,8 @@ class Drawable
     float yScale;
     float zScale;
 
+    int elementCount;
+
     Drawable(std::vector<float> vertData, std::vector<float> colorData, Shader* shad);
     ~Drawable();
 
@@ -42,6 +44,7 @@ class Drawable
     float getYAngle();
     float getZAngle();
     void clearData();
+    void draw();
 };
 
 #endif

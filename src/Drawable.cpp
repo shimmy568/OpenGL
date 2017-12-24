@@ -5,6 +5,11 @@
 #include <vector>
 #include <stdexcept>
 #include <iostream>
+#include <iomanip>
+
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+#include <glm/gtc/type_ptr.hpp>
 
 Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Shader *shad)
 {
@@ -15,8 +20,10 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Sh
 
     //Generate element data
     std::vector<int> elementData;
-    std::vector<float> uniqueData;
-    Drawable::formatElementData(splicedData, &elementData, 6); 
+    std::vector<float> uniqueData = Drawable::formatElementData(splicedData, &elementData, 6);
+
+    //set element count
+    Drawable::elementCount = elementData.size();
 
     //Create and bind this objects vertex array
     glGenVertexArrays(1, &(Drawable::vertexArrayObject));
@@ -39,10 +46,10 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Sh
     glEnableVertexAttribArray(posAttrib);
     glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), 0);
 
-    GLint colorAttrib = glGetAttribLocation(Drawable::shader->getGlPointer(), "position");
+    GLint colorAttrib = glGetAttribLocation(Drawable::shader->getGlPointer(), "color");
     glEnableVertexAttribArray(colorAttrib);
     glVertexAttribPointer(colorAttrib, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void *)(3 * sizeof(float)));
-    
+
     //Clear vao
     glBindVertexArray(0);
 }
@@ -60,6 +67,52 @@ void Drawable::clearData()
 
 Drawable::~Drawable()
 {
+    Drawable::clearData();
+}
+
+void Drawable::draw()
+{
+    //Use shader
+    glUseProgram(Drawable::shader->getGlPointer());
+
+    //bind vertex object
+    glBindVertexArray(Drawable::vertexArrayObject);
+
+    //bind buffers
+    glBindBuffer(GL_ARRAY_BUFFER, Drawable::vertexBufferObject);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Drawable::elementBufferObject);
+
+    // Set up projection
+    glm::mat4 view = glm::lookAt(
+        glm::vec3(1.2f, 1.2f, 1.0f),
+        glm::vec3(0.0f, 0.0f, 0.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f));
+    GLint uniView = glGetUniformLocation(Drawable::shader->getGlPointer(), "view");
+    glUniformMatrix4fv(uniView, 1, GL_FALSE, glm::value_ptr(view));
+
+    glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 1.0f, 10.0f);
+    GLint uniProj = glGetUniformLocation(Drawable::shader->getGlPointer(), "proj");
+    glUniformMatrix4fv(uniProj, 1, GL_FALSE, glm::value_ptr(proj));
+
+    GLint uniModel = glGetUniformLocation(Drawable::shader->getGlPointer(), "model");
+
+    glm::mat4 model;
+    model = glm::rotate(
+        model,
+        glm::radians(180.0f),
+        glm::vec3(0.0f, 0.0f, 1.0f));
+    glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
+
+    GLenum err;
+    while ((err = glGetError()) != GL_NO_ERROR)
+    {
+        std::cout << std::hex << err << std::endl;
+    }
+
+
+    std::cout << Drawable::elementCount << std::endl;
+    //draw object
+    glDrawElements(GL_TRIANGLES, Drawable::elementCount, GL_UNSIGNED_INT, 0);
 }
 
 std::vector<float> Drawable::spliceData(std::vector<float> vectorData, std::vector<float> colorData)
@@ -121,7 +174,7 @@ std::vector<float> Drawable::formatElementData(std::vector<float> data, std::vec
         std::string vertKey = std::to_string(data[i]);
         for (int o = 1; o < step; o++)
         {
-            vertKey += "," + std::to_string(data[i + step]);
+            vertKey += "," + std::to_string(data[i + o]);
         }
         auto res = dupeChecker.find(vertKey);
         if (res != dupeChecker.end())
