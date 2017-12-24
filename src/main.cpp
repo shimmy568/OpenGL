@@ -266,17 +266,19 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_STENCIL_TEST);
 
+    auto t_start = std::chrono::high_resolution_clock::now();
+
     while (!glfwWindowShouldClose(window))
     {
 
         // Clear the screen to black
-        glClearColor(0.0f, 0.25f, 0.25f, 1.0f);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         //Shit go here
 
-        //auto t_now = std::chrono::high_resolution_clock::now();
-        //float duration = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
+        auto t_now = std::chrono::high_resolution_clock::now();
+        float duration = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
         /* glm::mat4 model;
         model = glm::rotate(
@@ -285,6 +287,7 @@ int main()
             glm::vec3(0.0f, 0.0f, 1.0f));
         glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model)); */
 
+        d.zAngle = glm::degrees(3.141592f * duration);
         d.draw();
         //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         //glDrawArrays(GL_TRIANGLES, 0, 36);

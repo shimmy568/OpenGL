@@ -22,6 +22,26 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Sh
     std::vector<int> elementData;
     std::vector<float> uniqueData = Drawable::formatElementData(splicedData, &elementData, 6);
 
+    for(int i = 0; i < splicedData.size(); i++){
+        if((i + 1) % 6 == 0){
+            std::cout << splicedData[i] << std::endl;
+        }else{
+            std::cout << splicedData[i] << " ";
+        }
+    }
+
+    for(int i = 0; i < uniqueData.size(); i++){
+        if((i + 1) % 6 == 0){
+            std::cout << uniqueData[i] << std::endl;
+        }else{
+            std::cout << uniqueData[i] << " ";
+        }
+    }
+
+    for(int i = 0; i < elementData.size(); i++){
+        std::cout << elementData[i] << std::endl;
+    }
+
     //set element count
     Drawable::elementCount = elementData.size();
 
@@ -99,7 +119,7 @@ void Drawable::draw()
     glm::mat4 model;
     model = glm::rotate(
         model,
-        glm::radians(180.0f),
+        glm::radians(Drawable::zAngle),
         glm::vec3(0.0f, 0.0f, 1.0f));
     glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model));
 
@@ -109,8 +129,6 @@ void Drawable::draw()
         std::cout << std::hex << err << std::endl;
     }
 
-
-    std::cout << Drawable::elementCount << std::endl;
     //draw object
     glDrawElements(GL_TRIANGLES, Drawable::elementCount, GL_UNSIGNED_INT, 0);
 }
@@ -129,13 +147,13 @@ std::vector<float> Drawable::spliceData(std::vector<float> vectorData, std::vect
         //Add vertex data for the point
         for (int o = 0; o < 3; o++)
         {
-            splicedData.push_back(vectorData[i + o]);
+            splicedData.push_back(vectorData[i * 3 + o]);
         }
 
         //Add color data for the point
         for (int o = 0; o < 3; o++)
         {
-            splicedData.push_back(colorData[i + o]);
+            splicedData.push_back(colorData[i * 3 + o]);
         }
     }
 
