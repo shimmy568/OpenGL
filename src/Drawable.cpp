@@ -22,26 +22,6 @@ Drawable::Drawable(std::vector<float> vertData, std::vector<float> colorData, Sh
     std::vector<int> elementData;
     std::vector<float> uniqueData = Drawable::formatElementData(splicedData, &elementData, 6);
 
-    for(int i = 0; i < splicedData.size(); i++){
-        if((i + 1) % 6 == 0){
-            std::cout << splicedData[i] << std::endl;
-        }else{
-            std::cout << splicedData[i] << " ";
-        }
-    }
-
-    for(int i = 0; i < uniqueData.size(); i++){
-        if((i + 1) % 6 == 0){
-            std::cout << uniqueData[i] << std::endl;
-        }else{
-            std::cout << uniqueData[i] << " ";
-        }
-    }
-
-    for(int i = 0; i < elementData.size(); i++){
-        std::cout << elementData[i] << std::endl;
-    }
-
     //set element count
     Drawable::elementCount = elementData.size();
 
@@ -98,11 +78,12 @@ void Drawable::draw()
     //bind vertex object
     glBindVertexArray(Drawable::vertexArrayObject);
 
-    //bind buffers
+    // bind buffers
     glBindBuffer(GL_ARRAY_BUFFER, Drawable::vertexBufferObject);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, Drawable::elementBufferObject);
 
     // Set up projection
+    // pos of cam, where it look, where is up
     glm::mat4 view = glm::lookAt(
         glm::vec3(1.2f, 1.2f, 1.0f),
         glm::vec3(0.0f, 0.0f, 0.0f),
