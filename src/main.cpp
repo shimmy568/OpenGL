@@ -159,7 +159,7 @@ int main()
         0.25f, 0.5f, 0.5f,
         0.25f, 0.5f, 0.25f};
 
-    //Load shader src
+    // Load shader src
     const char *vertShaderSrc =
 #include "shaders/shad.vert"
         ;
@@ -170,17 +170,17 @@ int main()
 
     glEnable(GL_DEBUG_OUTPUT);
 
-    //Load Shader using shader obj
+    // Load Shader using shader obj
     Shader basicShader(vertShaderSrc, fragShaderSrc);
 
     Drawable d(std::vector<float>(verts, verts + sizeof verts / sizeof(float)), std::vector<float>(colorData, colorData + sizeof colorData / sizeof(float)), &basicShader);
 
-    // //Vertex array object (look into how these work)
+    // // Vertex array object (look into how these work)
     // GLuint vao;
     // glGenVertexArrays(1, &vao);
     // glBindVertexArray(vao);
 
-    // //Send the vertex data to the gpu
+    // // Send the vertex data to the gpu
     // GLuint vbo;
     // glGenBuffers(1, &vbo);
     // glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -196,29 +196,29 @@ int main()
     // glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ebo);
     // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(elements), elements, GL_STATIC_DRAW);
 
-    // //Set shader output
+    // // Set shader output
     // glBindFragDataLocation(basicShader.getGlPointer(), 0, "outColor");
 
-    // //Set the active shader
+    // // Set the active shader
     // glUseProgram(basicShader.getGlPointer());
 
-    // //Configure how the shader reads from the vertex buffer
-    // //Position info
+    // // Configure how the shader reads from the vertex buffer
+    // // Position info
     // GLint posAttrib = glGetAttribLocation(basicShader.getGlPointer(), "position");
     // glEnableVertexAttribArray(posAttrib);
     // glVertexAttribPointer(posAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), 0);
 
-    // //Color info
+    // // Color info
     // GLint colAttrib = glGetAttribLocation(basicShader.getGlPointer(), "color");
     // glEnableVertexAttribArray(colAttrib);
     // glVertexAttribPointer(colAttrib, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
 
-    // //Texture info
+    // // Texture info
     // GLint texAttrib = glGetAttribLocation(basicShader.getGlPointer(), "texcoord");
     // glEnableVertexAttribArray(texAttrib);
     // glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(6 * sizeof(float)));
 
-    // //Load test image
+    // // Load test image
     // GLuint textures[2];
     // glGenTextures(2, textures);
 
@@ -275,22 +275,24 @@ int main()
         glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        //Shit go here
+        // Shit go here
 
         auto t_now = std::chrono::high_resolution_clock::now();
         float duration = std::chrono::duration_cast<std::chrono::duration<float>>(t_now - t_start).count();
 
-        /* glm::mat4 model;
-        model = glm::rotate(
-            model,
-            duration * glm::radians(180.0f),
+        // Set up projection
+        // pos of cam, where it look, where is up
+        glm::mat4 view = glm::lookAt(
+            glm::vec3(1.2f, 1.2f, 1.0f),
+            glm::vec3(0.0f, 0.0f, 0.0f),
             glm::vec3(0.0f, 0.0f, 1.0f));
-        glUniformMatrix4fv(uniModel, 1, GL_FALSE, glm::value_ptr(model)); */
+
+        glm::mat4 proj = glm::perspective(glm::radians(45.0f), 1920.0f / 1080.0f, 1.0f, 10.0f);
 
         d.zAngle = glm::degrees(3.141592f * duration);
-        d.draw();
-        //glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-        //glDrawArrays(GL_TRIANGLES, 0, 36);
+        d.draw(view, proj);
+        // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        // glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

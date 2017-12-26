@@ -6,6 +6,8 @@
 #include <vector>
 #include <Shader.h>
 
+#include <glm/glm.hpp>
+
 class Drawable
 {
   private:
@@ -17,6 +19,7 @@ class Drawable
 
     std::vector<float> formatElementData(std::vector<float> data, std::vector<int>* elements, int step);
     std::vector<float> spliceData(std::vector<float> vectorData, std::vector<float> colorData);
+    glm::mat4 generateModelMatrix();
   public:
     float xPosition;
     float yPosition;
@@ -44,7 +47,7 @@ class Drawable
     float getYAngle();
     float getZAngle();
     void clearData();
-    void draw();
+    void draw(glm::mat4 view, glm::mat4 proj);
 };
 
 #endif

@@ -1,15 +1,22 @@
 #include <Camera.h>
 
 #include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/type_ptr.hpp>
 
 Camera::Camera()
 {
+    Camera::upZ = 1.0f;
 }
 
 Camera::~Camera()
 {
+}
+
+glm::mat4 Camera::getViewMatrix(){
+    return glm::lookAt(
+        glm::vec3(Camera::camX, Camera::camY, Camera::camZ),
+        glm::vec3(Camera::lookX, Camera::lookY, Camera::lookZ),
+        glm::vec3(Camera::upX, Camera::upY, Camera::upZ)
+    );
 }
 
 /**

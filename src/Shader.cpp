@@ -7,7 +7,7 @@
  */
 Shader::Shader(const char *vertSrc, const char *fragSrc)
 {
-    //Compile shaders
+    // Compile shaders
     GLuint vertShader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertShader, 1, &vertSrc, NULL);
     glCompileShader(vertShader);
@@ -16,7 +16,7 @@ Shader::Shader(const char *vertSrc, const char *fragSrc)
     glShaderSource(fragShader, 1, &fragSrc, NULL);
     glCompileShader(fragShader);
 
-    //Get shader compile status
+    // Get shader compile status
     GLint status1;
     glGetShaderiv(vertShader, GL_COMPILE_STATUS, &status1);
 
@@ -26,7 +26,7 @@ Shader::Shader(const char *vertSrc, const char *fragSrc)
     if (status1 != GL_TRUE || status2 != GL_TRUE)
     {
         std::cout << "shaders failed to compile" << std::endl;
-        //Get shader complile log
+        // Get shader complile log
         int length;
         glGetShaderiv(vertShader, GL_INFO_LOG_LENGTH, &length);
         char *bufferVert = new char[length];
@@ -41,12 +41,12 @@ Shader::Shader(const char *vertSrc, const char *fragSrc)
         delete bufferFrag;
     }
 
-    //Create shader program
+    // Create shader program
     Shader::shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram, vertShader);
     glAttachShader(shaderProgram, fragShader);
 
-    //Link shader program
+    // Link shader program
     glLinkProgram(Shader::shaderProgram);
 
     glDeleteShader(vertShader);
