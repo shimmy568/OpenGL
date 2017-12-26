@@ -10,20 +10,31 @@
 class ObjectManager
 {
   private:
-    std::unordered_map<std::string, Camera> cameras;
-    std::vector<Drawable> objects;
+    std::unordered_map<std::string, Camera*> cameras;
+    std::unordered_map<int, Drawable*> objects;
     glm::mat4 projMat;
     std::string currentCam;
+
+    int generateNewObjectID();
 
   public:
     ObjectManager(float fov, float screenRatio, float zNear, float zFar);
     ~ObjectManager();
     void render();
     void update();
+
+    //Camera management
     bool setCamera(std::string camName);
-    bool addCamera(std::string camName, Camera cam);
+    bool addCamera(std::string camName, Camera* cam);
     bool removeCamera(std::string camName);
-    std::string getCurrentCamera();
+    Camera* getCamera(std::string camName);
+    Camera* getCurrentCamera();
+    std::string getCurrentCameraName();
+
+    //Object management
+    int addObject(Drawable* obj);
+    bool removeObject(int id);
+    Drawable* getObject(int id);
 };
 
 #endif

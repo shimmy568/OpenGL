@@ -11,9 +11,19 @@
 
 #include <Shader.h>
 #include <Drawable.h>
+#include <ObjectManager.h>
+#include <Camera.h>
 
 int main()
 {
+
+    //Test objectManager
+    ObjectManager man(45.0f, 1920.0f / 1080.0f, 1.0f, 10.0f);
+    Camera* a = man.getCurrentCamera();
+    Camera* b = man.getCurrentCamera();
+
+    std::cout << a << " " << b << std::endl;
+
     glfwInit();
 
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
