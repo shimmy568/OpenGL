@@ -1,2 +1,2 @@
 # OpenGL
-I want to die
+Just playing around with OpenGL
